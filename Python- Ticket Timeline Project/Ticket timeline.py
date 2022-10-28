@@ -11,6 +11,9 @@ from fpdf import FPDF
 import getpass
 import sys
 
+"""
+These are time sensitive variables so we create them at the start of the program. 
+"""
 now = datetime.now()
 dte = now.strftime("%m-%d-%Y")
 
@@ -19,6 +22,11 @@ user = getpass.getuser()
 
 
 def generate_logs(now):
+    """
+    This is the main part of the program that gathers and store the user inputs /w time.
+    :param now:
+    :return:
+    """
     curr = now.strftime("%m/%d/%Y %H:%M:%S:%f")
     log = {}
     count = 0
@@ -59,6 +67,12 @@ def generate_logs(now):
 
 
 def print_file(log, down):
+    """
+    This is the legacy method of file printing
+    :param log:
+    :param down:
+    :return:
+    """
     loc = input("Issue location: ")
     cli = input("Client: ")
 
@@ -87,36 +101,33 @@ def print_file(log, down):
     f.close()
 
 
-def prolif(temp, pdf):
-    """
-    This method allows the Lines to not overflow to the sides.
-    magic is the number of characters it takes to start a new line
-
-    :param temp:
-    :param pdf:
-    :return:
-    """
-    n = len(temp)
-    magic = 95
-    if n > magic:
-        pdf.cell(w=538.5, h=15, txt=str(temp[:magic]), ln=1, fill=True)
-        prolif(temp[magic: n-1], pdf)
-
-    else:
-        pdf.cell(w=538.5, h=15, txt=temp, ln=1, fill=True)
-
-
 class PDF(FPDF):
-
+    """
+    This class sole purpose is to utilize the Header and the Footer functions of FPDF
+    """
     def header(self):
-        pass
+        self.image("source\\timeline-solid.png", 538.5, 10, w=20, h=20)
+
+    def footer(self):
+        # Go to 1.5 cm from bottom
+        self.set_y(-15)
+        # Select Arial italic 8
+        self.set_font('Arial', 'B', 8)
+        # Print centered page number
+        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'C')
 
     def newpage(self):
         self.add_page()
 
 
-
 def generate_pdf(log, down, pdf):
+    """
+    This function is responsible for generating the PDF
+    :param log:
+    :param down:
+    :param pdf:
+    :return:
+    """
     loc = input("Issue location: ")
     cli = input("Client: ")
     user = getpass.getuser()
@@ -128,8 +139,8 @@ def generate_pdf(log, down, pdf):
 
     today = date.today()
 
-    pdf.set_font(family='Helvetica', size=24, style='B')
-    pdf.cell(w=0, h=80, txt=f'Ticket Time Line', align='C', ln=1)
+    pdf.set_font(family='Courier', size=24, style='B')
+    pdf.cell(w=0, h=80, txt=f'Time Tracker', align='C', ln=1)
 
     pdf.set_font(family='Helvetica', size=7, )
     pdf.cell(w=0, h=10, txt='| Created ' + str(today.month) + '/' + str(today.day) + '/' + str(today.year),
@@ -171,7 +182,7 @@ def generate_pdf(log, down, pdf):
 
             pdf.set_fill_color(219, 219, 219)
 
-            pdf.set_font(family='Helvetica', size=10)
+            pdf.set_font(family='Courier', size=10)
             prolif(tempv[i], pdf)
             pdf.cell(w=10, h=10, ln=1)
 
@@ -188,7 +199,7 @@ def generate_pdf(log, down, pdf):
             pdf.set_text_color(0, 0, 0)
             pdf.set_fill_color(219, 219, 219)
 
-            pdf.set_font(family='Helvetica', size=10)
+            pdf.set_font(family='Courier', size=10)
             prolif(tempv[i], pdf)
 
         else:
@@ -201,7 +212,7 @@ def generate_pdf(log, down, pdf):
             pdf.set_text_color(0, 0, 0)
             pdf.set_fill_color(219, 219, 219)
 
-            pdf.set_font(family='Helvetica', size=10)
+            pdf.set_font(family='Courier', size=10)
             prolif(tempv[i], pdf)
 
             pdf.cell(w=10, h=10, ln=1)
@@ -216,6 +227,25 @@ def generate_pdf(log, down, pdf):
         except:
             input("Could not save file at location:" + filename +
                   "\n Make sure file is closed if saved.\n (ENTER to Try again)")
+
+
+def prolif(temp, pdf):
+    """
+    This method allows the Lines to not overflow to the sides.
+    magic is the number of characters it takes to start a new line
+
+    :param temp:
+    :param pdf:
+    :return:
+    """
+    n = len(temp)
+    magic = 95
+    if n > magic:
+        pdf.cell(w=538.5, h=15, txt=str(temp[:magic]), ln=1, fill=True)
+        prolif(temp[magic: n-1], pdf)
+
+    else:
+        pdf.cell(w=538.5, h=15, txt=temp, ln=1, fill=True)
 
 
 generate_logs(now)

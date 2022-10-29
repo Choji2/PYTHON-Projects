@@ -4,10 +4,10 @@ Created on Wed Dec 22 16:31:21 2021
 
 @author: vac59186
 """
-
+from classes.PDF import PDF
+from classes.Fileshare import Fileshare
 from datetime import datetime
 from datetime import date
-from fpdf import FPDF
 import getpass
 import sys
 
@@ -19,7 +19,6 @@ dte = now.strftime("%m-%d-%Y")
 
 start = datetime.now()
 user = getpass.getuser()
-
 
 def generate_logs(now):
     """
@@ -101,25 +100,6 @@ def print_file(log, down):
     f.close()
 
 
-class PDF(FPDF):
-    """
-    This class sole purpose is to utilize the Header and the Footer functions of FPDF
-    """
-    def header(self):
-        self.image("source\\timeline-solid.png", 538.5, 10, w=20, h=20)
-
-    def footer(self):
-        # Go to 1.5 cm from bottom
-        self.set_y(-15)
-        # Select Arial italic 8
-        self.set_font('Arial', 'B', 8)
-        # Print centered page number
-        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'C')
-
-    def newpage(self):
-        self.add_page()
-
-
 def generate_pdf(log, down, pdf):
     """
     This function is responsible for generating the PDF
@@ -128,16 +108,15 @@ def generate_pdf(log, down, pdf):
     :param pdf:
     :return:
     """
+    today = date.today()
     loc = input("Issue location: ")
     cli = input("Client: ")
     user = getpass.getuser()
-    filename = 'timeline.pdf'
+    filename = f'generated_files\\timeline_{today.month}-{today.day}-{today.year}_{loc}_{cli}.pdf'
     n = len(log)
 
     pdf = PDF(orientation='P', unit='pt', format='A4')
     pdf.newpage()
-
-    today = date.today()
 
     pdf.set_font(family='Courier', size=24, style='B')
     pdf.cell(w=0, h=80, txt=f'Time Tracker', align='C', ln=1)
@@ -221,13 +200,19 @@ def generate_pdf(log, down, pdf):
     while live:
         try:
             pdf.output(filename)
-            input("Saved file at location:" + filename +
-                  "\n (ENTER to QUIT)")
+
+            try:
+                share = Fileshare(filename, 'APOWxvFOsTZyhEyonyTfmz')
+                print(f'Link to Report: {share.share()}')
+
+            except:
+                print("ERROR:API could not produce file link.\n Contact admin for support.")
+                #print_file(log, down)
+
             live = False
         except:
             input("Could not save file at location:" + filename +
                   "\n Make sure file is closed if saved.\n (ENTER to Try again)")
-
 
 def prolif(temp, pdf):
     """

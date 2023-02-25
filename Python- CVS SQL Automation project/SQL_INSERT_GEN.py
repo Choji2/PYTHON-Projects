@@ -15,7 +15,7 @@ def dateFormater():
     return _today
 
 def parseValues(reader):
-    saveFile ='C:/users/'+_user+'/Documents/INSERT_STATEMENT'+_today+'.txt'
+    saveFile = 'C:/users/'+_user+'/Documents/INSERT_STATEMENT_'+table.upper()+"_"+_today+'.txt'
     with open(saveFile, 'w', newline='') as sfile:
         c = 0
         for row in reader:
@@ -28,11 +28,11 @@ def parseValues(reader):
                 if i == 0:
                     value_list += "\'"+row[i].strip()+"\'"
                 else:
-                        value_list += ",\'"+row[i].strip()+"\'"
+                    value_list += ",\'"+row[i].strip()+"\'"
                         
             if c == 0:
                 print('TEMPLATE:')
-                print("INSERT INTO"+table+" VALUES("+str(row)+");")
+                print("INSERT INTO "+table.upper()+" VALUES("+str(row)+");")
                 input("Press Enter...")
             else:
                 
@@ -48,7 +48,7 @@ _today = dateFormater()
 
 table = input("Enter table name and press ENTER: ")
 
-print("SQL TABLE_______________\n"+table)
+print("SQL TABLE_______________\n"+table.upper())
 input("\nYou will now be prompt to open a file. Press ENTER to Continue...")
 
 Tk().withdraw()     # we don't want a full GUI, so keep the root window from appearing

@@ -46,15 +46,25 @@ def parseValues(reader):
 _user = os.getlogin()
 _today = dateFormater()
 
-table = " PRINT_MONITOR_INFO_TBX"
+table = input("Enter table name and press ENTER: ")
+
+print("SQL TABLE_______________\n"+table)
+input("\nYou will now be prompt to open a file. Press ENTER to Continue...")
 
 Tk().withdraw()     # we don't want a full GUI, so keep the root window from appearing
 filepath = askopenfilename()
+try:
+    with open(filepath, 'r', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        try:
+            parseValues(reader)
+        except Exception as e:
+            print("Error| " + str(e))
+            print("File must only contain data in columns.The first row will be use to show the Field Titles...")
 
-with open(filepath, 'r', newline='') as csvfile:
-    reader = csv.reader(csvfile)
-    
-    parseValues(reader)
+except Exception as e:
+    print("Error| "+str(e))
+
     
                 
                     

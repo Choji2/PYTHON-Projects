@@ -5,7 +5,6 @@ Created on Wed Dec 22 16:31:21 2021
 @author: vac59186
 """
 from classes.PDF import PDF
-from classes.Fileshare import Fileshare
 from datetime import datetime
 from datetime import date
 import getpass
@@ -112,7 +111,7 @@ def generate_pdf(log, down, pdf):
     loc = input("Issue location: ")
     cli = input("Client: ")
     user = getpass.getuser()
-    filename = f'generated_files\\timeline_{today.month}-{today.day}-{today.year}_{loc}_{cli}.pdf'
+    filename = f'C:/Users/{user}/Documents/{dte}_{loc}_{cli}.pdf'
     n = len(log)
 
     pdf = PDF(orientation='P', unit='pt', format='A4')
@@ -200,15 +199,7 @@ def generate_pdf(log, down, pdf):
     while live:
         try:
             pdf.output(filename)
-
-            try:
-                share = Fileshare(filename, 'APOWxvFOsTZyhEyonyTfmz')
-                print(f'Link to Report: {share.share()}')
-
-            except:
-                print("ERROR:API could not produce file link.\n Contact admin for support.")
-                #print_file(log, down)
-
+            input("File saved at "+filename+ "\n(ENTER to exit)")
             live = False
         except:
             input("Could not save file at location:" + filename +
@@ -224,7 +215,7 @@ def prolif(temp, pdf):
     :return:
     """
     n = len(temp)
-    magic = 95
+    magic = 90
     if n > magic:
         pdf.cell(w=538.5, h=15, txt=str(temp[:magic]), ln=1, fill=True)
         prolif(temp[magic: n-1], pdf)
